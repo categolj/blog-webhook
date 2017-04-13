@@ -21,6 +21,9 @@ public class BlogWebhookApplication {
 
 	@Bean
 	RouterFunction<ServerResponse> route(GitHubWebHook webHook) {
-		return RouterFunctions.route(POST("/"), webHook::hook);
+		return RouterFunctions.route(
+				POST("/").and(
+						req -> req.headers().header("X-GitHub-Event").contains("push")),
+				webHook::hook);
 	}
 }
