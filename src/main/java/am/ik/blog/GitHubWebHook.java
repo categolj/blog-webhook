@@ -50,7 +50,7 @@ public class GitHubWebHook {
 					});
 			return ServerResponse.ok().body(fromPublisher(body, ResolvableType
 					.forClassWithGenerics(Map.class, String.class, Integer.class)));
-		}).otherwise(e -> {
+		}).switchOnError(e -> {
 			log.error("Error!", e);
 			return ServerResponse.status(HttpStatus.BAD_REQUEST)
 					.body(Mono.justOrEmpty(e.getMessage()), String.class);
