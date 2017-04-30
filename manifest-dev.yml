@@ -1,0 +1,12 @@
+applications:
+- name: blog-webhook-dev
+  memory: 1g
+  instances: 1
+  domains:
+  - pezapp.io
+  path: target/blog-webhook-0.0.1-SNAPSHOT.jar
+  services:
+  - blog-rabbit
+  env:
+    logging.level.reactor.ipc.netty: INFO
+    logging.level.am.ik.blog: DEBUG
