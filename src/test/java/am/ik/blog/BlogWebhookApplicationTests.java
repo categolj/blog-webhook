@@ -1,6 +1,7 @@
 package am.ik.blog;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.web.reactive.function.BodyInserters.fromObject;
 
 import java.util.Collections;
 import java.util.concurrent.BlockingQueue;
@@ -31,8 +32,9 @@ public class BlogWebhookApplicationTests {
 	@SuppressWarnings("unchecked")
 	public void addedRequest() throws Exception {
 		Fixtures.WebHook webhook = Fixtures.added();
-		webClient.post().uri("/").body(webhook.payload()).headers(webhook.headers())
-				.exchange().expectStatus().isOk().expectBody(String.class).value()
+		webClient.post().uri("/").body(fromObject(webhook.payload()))
+				.headers(webhook.headers()).exchange().expectStatus().isOk()
+				.expectBody(String.class)
 				.isEqualTo("{\"added\":1,\"removed\":0,\"modified\":0}");
 		Message<?> poll = messageCollector.forChannel(source.output()).poll(3,
 				TimeUnit.SECONDS);
@@ -44,8 +46,9 @@ public class BlogWebhookApplicationTests {
 	@SuppressWarnings("unchecked")
 	public void removedRequest() throws Exception {
 		Fixtures.WebHook webhook = Fixtures.removed();
-		webClient.post().uri("/").body(webhook.payload()).headers(webhook.headers())
-				.exchange().expectStatus().isOk().expectBody(String.class).value()
+		webClient.post().uri("/").body(fromObject(webhook.payload()))
+				.headers(webhook.headers()).exchange().expectStatus().isOk()
+				.expectBody(String.class)
 				.isEqualTo("{\"added\":0,\"removed\":1,\"modified\":0}");
 		Message<?> poll = messageCollector.forChannel(source.output()).poll(3,
 				TimeUnit.SECONDS);
@@ -57,8 +60,9 @@ public class BlogWebhookApplicationTests {
 	@SuppressWarnings("unchecked")
 	public void modifiedRequest() throws Exception {
 		Fixtures.WebHook webhook = Fixtures.modified();
-		webClient.post().uri("/").body(webhook.payload()).headers(webhook.headers())
-				.exchange().expectStatus().isOk().expectBody(String.class).value()
+		webClient.post().uri("/").body(fromObject(webhook.payload()))
+				.headers(webhook.headers()).exchange().expectStatus().isOk()
+				.expectBody(String.class)
 				.isEqualTo("{\"added\":0,\"removed\":0,\"modified\":1}");
 		Message<?> poll = messageCollector.forChannel(source.output()).poll(3,
 				TimeUnit.SECONDS);
@@ -71,8 +75,8 @@ public class BlogWebhookApplicationTests {
 	public void formatChanged() throws Exception {
 		Fixtures.WebHook webhook = Fixtures.added();
 		webClient.post().uri("/").contentType(MediaType.APPLICATION_JSON_UTF8)
-				.body(Collections.emptyMap()).headers(webhook.headers()).exchange()
-				.expectStatus().isBadRequest();
+				.body(fromObject(Collections.emptyMap())).headers(webhook.headers())
+				.exchange().expectStatus().isBadRequest();
 		BlockingQueue<Message<?>> queue = messageCollector.forChannel(source.output());
 		assertThat(queue.isEmpty()).isTrue();
 	}
