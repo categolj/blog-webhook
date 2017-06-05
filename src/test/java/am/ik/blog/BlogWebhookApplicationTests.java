@@ -38,7 +38,7 @@ public class BlogWebhookApplicationTests {
 				.isEqualTo("{\"added\":1,\"removed\":0,\"modified\":0}");
 		Message<?> poll = messageCollector.forChannel(source.output()).poll(3,
 				TimeUnit.SECONDS);
-		assertThat(poll.getPayload()).isEqualTo("{\"paths\":[\"content/00412.md\"]}");
+		assertThat(poll.getPayload()).isEqualTo("{\"paths\":[\"content/00412.md\"],\"repository\":\"making/blog.ik.am\"}");
 		assertThat(poll.getHeaders().get("type")).isEqualTo("added");
 	}
 
@@ -52,7 +52,7 @@ public class BlogWebhookApplicationTests {
 				.isEqualTo("{\"added\":0,\"removed\":1,\"modified\":0}");
 		Message<?> poll = messageCollector.forChannel(source.output()).poll(3,
 				TimeUnit.SECONDS);
-		assertThat(poll.getPayload()).isEqualTo("{\"paths\":[\"content/00012.md\"]}");
+		assertThat(poll.getPayload()).isEqualTo("{\"paths\":[\"content/00012.md\"],\"repository\":\"making/blog.ik.am\"}");
 		assertThat(poll.getHeaders().get("type")).isEqualTo("removed");
 	}
 
@@ -66,7 +66,7 @@ public class BlogWebhookApplicationTests {
 				.isEqualTo("{\"added\":0,\"removed\":0,\"modified\":1}");
 		Message<?> poll = messageCollector.forChannel(source.output()).poll(3,
 				TimeUnit.SECONDS);
-		assertThat(poll.getPayload()).isEqualTo("{\"paths\":[\"content/00379.md\"]}");
+		assertThat(poll.getPayload()).isEqualTo("{\"paths\":[\"content/00379.md\"],\"repository\":\"making/blog.ik.am\"}");
 		assertThat(poll.getHeaders().get("type")).isEqualTo("modified");
 	}
 

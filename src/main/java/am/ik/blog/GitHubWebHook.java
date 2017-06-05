@@ -36,10 +36,14 @@ public class GitHubWebHook {
 
 	Mono<ServerResponse> hook(ServerRequest request) {
 		return request.bodyToMono(JsonNode.class).flatMap(x -> {
+			String repository = x.get("repository").get("full_name").asText();
+			log.info("Received a webhook from {}", repository);
 			JsonNode commits = x.get("commits").get(0);
-			Mono<Map<String, Integer>> added = sendEvent(commits, "added");
-			Mono<Map<String, Integer>> removed = sendEvent(commits, "removed");
-			Mono<Map<String, Integer>> modified = sendEvent(commits, "modified");
+			Mono<Map<String, Integer>> added = sendEvent(repository, commits, "added");
+			Mono<Map<String, Integer>> removed = sendEvent(repository, commits,
+					"removed");
+			Mono<Map<String, Integer>> modified = sendEvent(repository, commits,
+					"modified");
 			Mono<Map<String, Integer>> body = Mono.when(added, removed, modified)
 					.map(t -> {
 						Map<String, Integer> result = new LinkedHashMap<>();
@@ -57,14 +61,17 @@ public class GitHubWebHook {
 		});
 	}
 
-	private Mono<Map<String, Integer>> sendEvent(JsonNode commits, String type) {
+	private Mono<Map<String, Integer>> sendEvent(String repository, JsonNode commits,
+			String type) {
 		List<String> paths = stream(commits.get(type).spliterator(), false)
 				.map(JsonNode::asText).collect(toList());
 		if (paths.isEmpty()) {
 			return Mono.just(Collections.singletonMap(type, 0));
 		}
 		else {
-			Map<String, Object> payload = Collections.singletonMap("paths", paths);
+			Map<String, Object> payload = new LinkedHashMap<>();
+			payload.put("paths", paths);
+			payload.put("repository", repository);
 			log.info("Send {} event = {}", type, payload);
 			Message<?> message = MessageBuilder.withPayload(payload)
 					.setHeader("type", type).build();
