@@ -12,7 +12,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cloud.stream.messaging.Source;
-import org.springframework.core.ResolvableType;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpStatus;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.support.MessageBuilder;
@@ -44,7 +44,7 @@ public class GitHubWebHook {
 					"removed");
 			Mono<Map<String, Integer>> modified = sendEvent(repository, commits,
 					"modified");
-			Mono<Map<String, Integer>> body = Mono.when(added, removed, modified)
+			Mono<Map<String, Integer>> body = Mono.zip(added, removed, modified)
 					.map(t -> {
 						Map<String, Integer> result = new LinkedHashMap<>();
 						result.putAll(t.getT1());
@@ -52,8 +52,9 @@ public class GitHubWebHook {
 						result.putAll(t.getT3());
 						return result;
 					});
-			return ServerResponse.ok().body(fromPublisher(body, ResolvableType
-					.forClassWithGenerics(Map.class, String.class, Integer.class)));
+			return ServerResponse.ok().body(fromPublisher(body,
+					new ParameterizedTypeReference<Map<String, Integer>>() {
+					}));
 		}).onErrorResume(e -> {
 			log.error("Error!", e);
 			return ServerResponse.status(HttpStatus.BAD_REQUEST)
