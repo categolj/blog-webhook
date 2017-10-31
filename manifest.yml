@@ -1,11 +1,9 @@
 applications:
 - name: blog-webhook
   buildpack: java_buildpack
-  domain: sslip.io
-  host: blog-webhook-202-241-169-198
   memory: 256m
   instances: 1
-  path: target/blog-webhook-0.1.0-SNAPSHOT.jar
+  path: target/blog-webhook-0.2.0-SNAPSHOT.jar
   services:
   - blog-rabbit
   env:
