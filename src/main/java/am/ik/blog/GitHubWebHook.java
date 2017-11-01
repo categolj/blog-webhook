@@ -7,31 +7,29 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cloud.stream.messaging.Source;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.support.MessageBuilder;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import org.springframework.stereotype.Component;
 
-@RestController
-public class GitHubWebHookController {
-	private static final Logger log = LoggerFactory
-			.getLogger(GitHubWebHookController.class);
+@Component("webhook")
+public class GitHubWebHook implements Function<JsonNode, Map<String, Integer>> {
+	private static final Logger log = LoggerFactory.getLogger(GitHubWebHook.class);
 
 	private final Source source;
 
-	public GitHubWebHookController(Source source) {
+	public GitHubWebHook(Source source) {
 		this.source = source;
 	}
 
-	@PostMapping(headers = "X-GitHub-Event=push")
-	public Map<String, Integer> webhook(@RequestBody JsonNode x) {
+	@Override
+	public Map<String, Integer> apply(JsonNode x) {
 		String repository = x.get("repository").get("full_name").asText();
 		log.info("Received a webhook from {}", repository);
 		JsonNode commits = x.get("commits").get(0);

@@ -41,7 +41,7 @@ public class BlogWebhookApplicationTests {
 	public void addedRequest() throws Exception {
 		Fixtures.WebHook webhook = Fixtures.added();
 		RequestEntity<JsonNode> requestEntity = new RequestEntity<>(webhook.payload(),
-				webhook.headers(), HttpMethod.POST, URI.create("/"));
+				webhook.headers(), HttpMethod.POST, URI.create("/webhook"));
 		ResponseEntity<String> responseEntity = restTemplate.exchange(requestEntity,
 				String.class);
 		assertThat(responseEntity.getBody())
@@ -58,7 +58,7 @@ public class BlogWebhookApplicationTests {
 	public void removedRequest() throws Exception {
 		Fixtures.WebHook webhook = Fixtures.removed();
 		RequestEntity<JsonNode> requestEntity = new RequestEntity<>(webhook.payload(),
-				webhook.headers(), HttpMethod.POST, URI.create("/"));
+				webhook.headers(), HttpMethod.POST, URI.create("/webhook"));
 		ResponseEntity<String> responseEntity = restTemplate.exchange(requestEntity,
 				String.class);
 		assertThat(responseEntity.getBody())
@@ -75,7 +75,7 @@ public class BlogWebhookApplicationTests {
 	public void modifiedRequest() throws Exception {
 		Fixtures.WebHook webhook = Fixtures.modified();
 		RequestEntity<JsonNode> requestEntity = new RequestEntity<>(webhook.payload(),
-				webhook.headers(), HttpMethod.POST, URI.create("/"));
+				webhook.headers(), HttpMethod.POST, URI.create("/webhook"));
 		ResponseEntity<String> responseEntity = restTemplate.exchange(requestEntity,
 				String.class);
 		assertThat(responseEntity.getBody())
