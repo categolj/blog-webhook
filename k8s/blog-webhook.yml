@@ -46,7 +46,7 @@ spec:
         - name: SPRING_PROFILES_ACTIVE
           value: cloud,kubernetes
         - name: JAVA_OPTS
-          value: "-Xmx304M -Xss1M -XX:MaxMetaspaceSize=145M -XX:ReservedCodeCacheSize=240M -XX:CompressedClassSpaceSize=24M -XX:MaxDirectMemorySize=10M -XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap -XX:MaxRAMFraction=1"
+          value: "-Xmx45M -Xss1M -XX:MaxMetaspaceSize=99M -XX:ReservedCodeCacheSize=32M -XX:CompressedClassSpaceSize=18M -XX:MaxDirectMemorySize=32M -XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap -XX:MaxRAMFraction=1"
         - name: SECURITY_USER_NAME
           valueFrom:
             configMapKeyRef:
@@ -69,9 +69,9 @@ spec:
               key: vcap-services.json
         resources:
           limits:
-            memory: "1024Mi"
+            memory: "256Mi"
           requests:
-            memory: "1024Mi"
+            memory: "256Mi"
         readinessProbe:
           httpGet:
             path: /health
