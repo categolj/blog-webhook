@@ -238,7 +238,7 @@ jobs:
     - get: repo-src
       resource: repo-develop
       passed:
-      - docker-push-develop
+      - deploy-k8s-develop
     - get: repo-dest
       resource: repo-master
   - task: merge-develop-to-master
